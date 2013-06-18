@@ -22,6 +22,10 @@ class RequestLogMiddleware(object):
         self.start = time.time()  # TODO: Better use time.clock on windows platform?
 
     def process_response(self, request, response):
+        for url_re in getattr(settings, 'DBLOGGING_IGNORE_URLS', []):
+            if url_re.match(request.get_full_path()):
+                return response
+
         user = getattr(request, 'user', None)
         RequestLog.objects.create(
             ip=request.META.get('REMOTE_ADDR', ''),
