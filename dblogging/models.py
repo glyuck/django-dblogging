@@ -10,7 +10,7 @@ class RequestLog(models.Model):
     user_repr = models.CharField(max_length=255)
     method = models.CharField(max_length=16)
     host = models.CharField(max_length=255)
-    path = models.CharField(max_length=4000) # IE8 limit is ~2048, mssql limit is 4000
+    path = models.CharField(max_length=4000)  # IE8 limit is ~2048, mssql limit is 4000
     query = models.CharField(max_length=4000)
     post = models.TextField()
     files = models.TextField()

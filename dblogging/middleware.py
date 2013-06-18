@@ -19,7 +19,7 @@ class RequestLogMiddleware(object):
                     for header, value in request.META.items() if header.startswith('HTTP_'))
 
     def process_request(self, request):
-        self.start = time.time() # TODO: Better use time.clock on windows platform?
+        self.start = time.time()  # TODO: Better use time.clock on windows platform?
 
     def process_response(self, request, response):
         user = getattr(request, 'user', None)
@@ -27,7 +27,7 @@ class RequestLogMiddleware(object):
             ip=request.META.get('REMOTE_ADDR', ''),
             session_key=request.session.session_key,
             user=user if user and user.is_authenticated() and isinstance(user, User) else None,
-            user_repr=unicode(user),
+            user_repr=str(user),
             method=request.method,
             host=request.get_host(),
             path=request.path,

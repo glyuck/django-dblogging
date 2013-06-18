@@ -1,5 +1,3 @@
-import datetime
-
 from django.contrib import admin
 
 from dblogging.models import RequestLog
