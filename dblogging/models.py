@@ -17,6 +17,8 @@ class RequestLog(models.Model):
     cookies = models.TextField()
     request_headers = models.TextField()
     response_headers = models.TextField()
+    response_status_code = models.IntegerField()
+    response_body = models.TextField(blank=True, null=True, default=None)
     total_time = models.FloatField()
 
     class Meta:

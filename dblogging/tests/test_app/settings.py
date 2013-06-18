@@ -31,3 +31,4 @@ PASSWORD_HASHERS = (
 
 # django-dblogging settings
 DBLOGGING_ENABLED = True
+DBLOGGING_SAVE_RESPONSE = True

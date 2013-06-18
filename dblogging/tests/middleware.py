@@ -28,6 +28,10 @@ class RequestLogMiddlewareTestCase(TestCase):
             self.client.get(self.url)
             self.assertEquals(0, RequestLog.objects.count())
 
+    def test_redirect(self):
+        self.client.get(reverse('dblogging_test_redirect'))
+        self.assertLog(response_status_code=302, response_body='')
+
     def test_method_host_url(self):
         query = 'a=b'
         url = self.url + '?' + query
@@ -75,3 +79,12 @@ class RequestLogMiddlewareTestCase(TestCase):
     def test_response_headers(self):
         self.client.get(self.url)
         self.assertLog(response_headers={'Content-Type': 'text/html'})
+
+    def test_response_status_code_response_body(self):
+        self.client.get(self.url)
+        self.assertLog(response_status_code=200, response_body='Sample response')
+
+    def test_DBLOGGING_SAVE_RESPONSE_False(self):
+        with self.settings(DBLOGGING_SAVE_RESPONSE=False):
+            response = self.client.get(self.url)
+            self.assertLog(response_status_code=response.status_code, response_body=None)

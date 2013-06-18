@@ -36,5 +36,7 @@ class RequestLogMiddleware(object):
             cookies=simplejson.dumps(dict(request.COOKIES.items())),
             request_headers=simplejson.dumps(self.get_headers(request)),
             response_headers=simplejson.dumps(dict(response.items())),
+            response_status_code=response.status_code,
+            response_body=response.content if getattr(settings, 'DBLOGGING_SAVE_RESPONSE', False) else None,
             total_time=time.time() - self.start if hasattr(self, 'start') else 0)
         return response
