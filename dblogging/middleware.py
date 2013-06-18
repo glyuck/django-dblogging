@@ -27,9 +27,12 @@ class RequestLogMiddleware(object):
                 return response
 
         user = getattr(request, 'user', None)
+        session_key = None
+        if hasattr(request, 'session'):
+            session_key = request.session.session_key
         RequestLog.objects.create(
             ip=request.META.get('REMOTE_ADDR', ''),
-            session_key=request.session.session_key,
+            session_key=session_key,
             user=user if user and user.is_authenticated() and isinstance(user, User) else None,
             user_repr=str(user),
             method=request.method,
