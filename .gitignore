@@ -3,4 +3,6 @@
 django_dblogging.egg-info
 /dist
 /build
+.coverage
+.tox
 
