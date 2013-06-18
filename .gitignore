@@ -1,0 +1,6 @@
+*.pyc
+*.DS_Store
+django_dblogging.egg-info
+/dist
+/build
+
