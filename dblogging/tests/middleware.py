@@ -69,12 +69,12 @@ class RequestLogMiddlewareTestCase(TestCase):
         self.assertLog(cookies={'test': 'test-value'})
 
     def test_request_headers(self):
-        expected_headers = {'COOKIE': '',  # Sent with each test client request
-                            'X-REQUESTED-WITH': 'XMLHttpRequest',
-                            'USER-AGENT': 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7'}
+        expected_headers = {'Cookie': '',  # Sent with each test client request
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'User-Agent': 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7'}
         self.client.get(self.url,
-                        HTTP_X_REQUESTED_WITH=expected_headers['X-REQUESTED-WITH'],
-                        HTTP_USER_AGENT=expected_headers['USER-AGENT'])
+                        HTTP_X_REQUESTED_WITH=expected_headers['X-Requested-With'],
+                        HTTP_USER_AGENT=expected_headers['User-Agent'])
         self.assertLog(request_headers=expected_headers)
 
     def test_response_headers(self):
