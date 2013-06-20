@@ -8,6 +8,9 @@ class RequestLogAdmin(admin.ModelAdmin):
     search_fields = ('ip', 'session_key', 'user_repr', 'path', 'query', 'cookies')
     ordering = ('-id',)
 
+    def has_add_permission(self, request):
+        return False
+
     def log_when(self, obj):
         return obj.when.strftime('%Y-%m-%d %H:%M:%S.%f')
 
