@@ -1,4 +1,5 @@
 import time
+import datetime
 
 from django.contrib.auth.models import User
 from django.core.exceptions import MiddlewareNotUsed
@@ -50,4 +51,9 @@ class RequestLogMiddleware(object):
             response_status_code=response.status_code,
             response_body=response.content if settings.DBLOGGING_SAVE_RESPONSE_BODY else None,
             total_time=time.time() - self.start if hasattr(self, 'start') else 0)
+
+        # Delete old RequestLog entries
+        if settings.DBLOGGING_LOG_EXPIRY_SECONDS:
+            RequestLog.objects.filter(when__lt=datetime.datetime.now() - datetime.timedelta(seconds=settings.DBLOGGING_LOG_EXPIRY_SECONDS)).delete()
+
         return response

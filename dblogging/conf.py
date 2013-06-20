@@ -9,3 +9,5 @@ class DBLoggingConf(AppConf):
     SAVE_RESPONSE_BODY = False
     # regexp patterns for ignored urls
     IGNORE_URLS = ()
+    # delete logs after # seconds
+    LOG_EXPIRY_SECONDS = 60 * 60 * 24 * 30  # 30 days

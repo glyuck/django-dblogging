@@ -1,9 +1,11 @@
+import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 
 
 class RequestLog(models.Model):
-    when = models.DateTimeField(auto_now_add=True)
+    when = models.DateTimeField(default=datetime.datetime.now, db_index=True)
     ip = models.IPAddressField()
     session_key = models.CharField(max_length=32, blank=True, null=True, default=None)
     user = models.ForeignKey(User, null=True, blank=True, default=None)

@@ -1,9 +1,13 @@
 import re
+import datetime
+
 from django.core.urlresolvers import reverse
 from django.test.testcases import TestCase
-from dblogging.models import RequestLog
 from django.contrib.auth.models import User, AnonymousUser
 from django.utils import simplejson
+
+from dblogging.models import RequestLog
+from dblogging.tests.helpers.factories import RequestLogF
 
 
 class RequestLogMiddlewareTestCase(TestCase):
@@ -95,3 +99,13 @@ class RequestLogMiddlewareTestCase(TestCase):
         with self.settings(DBLOGGING_IGNORE_URLS=ignore_patterns):
             self.client.get(self.url)
             self.assertEquals(0, RequestLog.objects.count())
+
+    def test_DBLOGGING_LOG_EXPIRY_SECONDS(self):
+        with self.settings(DBLOGGING_LOG_EXPIRY_SECONDS=180):
+            log1 = RequestLogF(when=datetime.datetime.now() - datetime.timedelta(seconds=190))
+            log2 = RequestLogF(when=datetime.datetime.now() - datetime.timedelta(seconds=170))
+            self.client.get(self.url)
+            with self.assertRaises(RequestLog.DoesNotExist):
+                RequestLog.objects.get(pk=log1.pk)
+            RequestLog.objects.get(pk=log2.pk)
+            self.assertEquals(2, RequestLog.objects.count())
