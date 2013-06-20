@@ -23,3 +23,12 @@ class RequestLog(models.Model):
 
     class Meta:
         get_latest_by = 'when'
+
+    def full_uri(self):
+        res = [self.host, self.path]
+        if self.query:
+            res += ['?', self.query]
+        return ''.join(res)
+
+    def full_uri_with_method(self):
+        return ' '.join([self.method, self.full_uri()])

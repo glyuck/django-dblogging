@@ -1,0 +1,32 @@
+table.dictionary {
+    margin-left: 7em;
+    padding-left: 30px;
+    overflow: hidden;
+}
+table.dictionary tr:nth-child(even) {
+    background: #EDF3FE;
+}
+table.dictionary th {
+    /*min-width: 150px;*/
+    border-bottom: none;
+    text-align: right;
+}
+table.dictionary td {
+    max-width: 1000px;
+    white-space: normal;
+    word-break: break-all;
+    border-bottom: none;
+}
+dl.dictionary dt {
+    float: left;
+    clear: left;
+    width: 100px;
+    text-align: right;
+    font-weight: bold;
+}
+dl.dictionary dt:after {
+    content: ':'
+}
+dl.dictionary dd {
+    margin-left: 130px;
+}
