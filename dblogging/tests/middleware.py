@@ -85,8 +85,8 @@ class RequestLogMiddlewareTestCase(TestCase):
         self.client.get(self.url)
         self.assertLog(response_status_code=200, response_body='Sample response')
 
-    def test_DBLOGGING_SAVE_RESPONSE_False(self):
-        with self.settings(DBLOGGING_SAVE_RESPONSE=False):
+    def test_DBLOGGING_SAVE_RESPONSE_BODY_False(self):
+        with self.settings(DBLOGGING_SAVE_RESPONSE_BODY=False):
             response = self.client.get(self.url)
             self.assertLog(response_status_code=response.status_code, response_body=None)
 

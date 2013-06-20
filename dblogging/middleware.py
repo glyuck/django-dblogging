@@ -1,16 +1,16 @@
 import time
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import MiddlewareNotUsed
 from django.utils import simplejson
 
+from dblogging.conf import settings
 from dblogging.models import RequestLog
 
 
 class RequestLogMiddleware(object):
     def __init__(self):
-        if not getattr(settings, 'DBLOGGING_ENABLED', False):
+        if not settings.DBLOGGING_ENABLED:
             raise MiddlewareNotUsed('Enable dblogging middleware via '
                                     'DBLOGGING_ENABLED=True in your settings')
 
@@ -22,7 +22,7 @@ class RequestLogMiddleware(object):
         self.start = time.time()  # TODO: Better use time.clock on windows platform?
 
     def process_response(self, request, response):
-        for url_re in getattr(settings, 'DBLOGGING_IGNORE_URLS', []):
+        for url_re in settings.DBLOGGING_IGNORE_URLS:
             if url_re.match(request.get_full_path()):
                 return response
 
@@ -44,6 +44,6 @@ class RequestLogMiddleware(object):
             request_headers=simplejson.dumps(self.get_headers(request)),
             response_headers=simplejson.dumps(dict(response.items())),
             response_status_code=response.status_code,
-            response_body=response.content if getattr(settings, 'DBLOGGING_SAVE_RESPONSE', False) else None,
+            response_body=response.content if settings.DBLOGGING_SAVE_RESPONSE_BODY else None,
             total_time=time.time() - self.start if hasattr(self, 'start') else 0)
         return response
