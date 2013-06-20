@@ -35,6 +35,12 @@ class RequestLogMiddleware(object):
         session_key = None
         if hasattr(request, 'session'):
             session_key = request.session.session_key
+        response_body = None
+        if settings.DBLOGGING_SAVE_RESPONSE_BODY:
+            if isinstance(settings.DBLOGGING_SAVE_RESPONSE_BODY, (bool)):
+                response_body = response.content
+            else:
+                response_body = response.content[:settings.DBLOGGING_SAVE_RESPONSE_BODY]
         RequestLog.objects.create(
             ip=request.META.get('REMOTE_ADDR', ''),
             session_key=session_key,
@@ -49,7 +55,7 @@ class RequestLogMiddleware(object):
             request_headers=simplejson.dumps(self.get_headers(request)),
             response_headers=simplejson.dumps(dict(response.items())),
             response_status_code=response.status_code,
-            response_body=response.content if settings.DBLOGGING_SAVE_RESPONSE_BODY else None,
+            response_body=response_body,
             total_time=time.time() - self.start if hasattr(self, 'start') else 0)
 
         # Delete old RequestLog entries
