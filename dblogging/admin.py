@@ -15,7 +15,7 @@ class RequestLogAdmin(admin.ModelAdmin):
     readonly_fields = RequestLog._meta.get_all_field_names() + ['full_uri_with_method', 'request_headers_html', 'response_headers_html', 'query_params_html', 'post_params_html']
     fieldsets = (
         (None, {
-            'fields': ('ip', 'session_key', 'user', 'user_repr')
+            'fields': ('when', 'ip', 'session_key', 'user', 'user_repr')
         }),
         ('Request', {
             'fields': ('full_uri_with_method', 'request_headers_html', 'query_params_html', 'post_params_html')
