@@ -18,7 +18,7 @@ class ConfTestCase(TestCase):
     def test_DBLOGGING_ENABLED_False(self):
         with self.settings(DBLOGGING_ENABLED=False):
             self.client.get(self.url)
-            self.assertEquals(0, RequestLog.objects.count())
+            self.assertEqual(0, RequestLog.objects.count())
 
     def test_DBLOGGING_SAVE_RESPONSE_BODY_False(self):
         with self.settings(DBLOGGING_SAVE_RESPONSE_BODY=False):
@@ -36,10 +36,10 @@ class ConfTestCase(TestCase):
             self.assertLog(response_status_code=response.status_code, response_body='')
 
     def test_DBLOGGING_IGNORE_URLS(self):
-        ignore_patterns = [re.compile('^/test.*')]
+        ignore_patterns = [re.compile('^/some_other_url$'), re.compile('^/test.*')]
         with self.settings(DBLOGGING_IGNORE_URLS=ignore_patterns):
             self.client.get(self.url)
-            self.assertEquals(0, RequestLog.objects.count())
+            self.assertEqual(0, RequestLog.objects.count())
 
     def test_DBLOGGING_LOG_EXPIRY_SECONDS(self):
         with self.settings(DBLOGGING_LOG_EXPIRY_SECONDS=180):
@@ -49,4 +49,14 @@ class ConfTestCase(TestCase):
             with self.assertRaises(RequestLog.DoesNotExist):
                 RequestLog.objects.get(pk=log1.pk)
             RequestLog.objects.get(pk=log2.pk)
-            self.assertEquals(2, RequestLog.objects.count())
+            self.assertEqual(2, RequestLog.objects.count())
+
+    def test_DBLOGGING_LOG_EXPIRY_SECONDS_None(self):
+        with self.settings(DBLOGGING_LOG_EXPIRY_SECONDS=None):
+            log1 = RequestLogF(when=datetime.datetime.now() - datetime.timedelta(minutes=45))
+            log2 = RequestLogF(when=datetime.datetime.now() - datetime.timedelta(weeks=30000))
+
+            self.client.get(self.url)
+            RequestLog.objects.get(pk=log1.pk)
+            RequestLog.objects.get(pk=log2.pk)
+            self.assertEqual(3, RequestLog.objects.count())

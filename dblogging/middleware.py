@@ -34,9 +34,7 @@ class RequestLogMiddleware(object):
 
     def get_headers(self, request):
         def header_name(header):
-            if header.startswith('HTTP_'):
-                header = header[5:]
-            return header.replace('_', ' ').title().replace(' ', '-')
+            return header[5:].replace('_', ' ').title().replace(' ', '-')
         return dict((header_name(header), value)
                     for header, value in request.META.items() if header.startswith('HTTP_'))
 
