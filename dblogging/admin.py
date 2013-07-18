@@ -9,7 +9,7 @@ from dblogging.models import RequestLog
 
 
 class RequestLogAdmin(admin.ModelAdmin):
-    list_display = ('log_when', 'total_time', 'ip', 'session_key', 'user', 'user_repr', 'method', 'path', 'query_short')
+    list_display = ('log_when', 'total_time', 'ip', 'session_key', 'user', 'user_repr', 'status_code', 'method', 'path', 'query_short')
     search_fields = ('ip', 'session_key', 'user_repr', 'path', 'query', 'cookies')
     ordering = ('-id',)
     readonly_fields = RequestLog._meta.get_all_field_names() + ['full_uri_with_method', 'request_headers_html', 'response_headers_html', 'query_params_html', 'post_params_html']
@@ -52,6 +52,10 @@ class RequestLogAdmin(admin.ModelAdmin):
     def log_when(self, requestlog):
         return '<nobr>' + requestlog.when.strftime('%Y-%m-%d %H:%M:%S.%f') + '</nobr>'
     log_when.allow_tags = True
+
+    def status_code(self, requestlog):
+        return requestlog.response_status_code
+    status_code.short_description = 'Code'
 
     def query_short(self, requestlog):
         return requestlog.query[:80]
