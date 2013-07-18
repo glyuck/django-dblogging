@@ -15,6 +15,23 @@ class RequestLogMiddleware(object):
             raise MiddlewareNotUsed('Enable dblogging middleware via '
                                     'DBLOGGING_ENABLED=True in your settings')
 
+    def get_host(self, request):
+        """Returns the HTTP host using the environment or request headers.
+        Django1.4 version, doesn't raise SuspiciousOperation if host is not in settings.ALLOWED_HOSTS"""
+        # We try three options, in order of decreasing preference.
+        if settings.USE_X_FORWARDED_HOST and (
+                'HTTP_X_FORWARDED_HOST' in request.META):
+            host = request.META['HTTP_X_FORWARDED_HOST']
+        elif 'HTTP_HOST' in request.META:
+            host = request.META['HTTP_HOST']
+        else:
+            # Reconstruct the host using the algorithm from PEP 333.
+            host = request.META['SERVER_NAME']
+            server_port = str(request.META['SERVER_PORT'])
+            if server_port != (request.is_secure() and '443' or '80'):
+                host = '%s:%s' % (host, server_port)
+        return host
+
     def get_headers(self, request):
         def header_name(header):
             if header.startswith('HTTP_'):
@@ -47,7 +64,7 @@ class RequestLogMiddleware(object):
             user=user if user and user.is_authenticated() and isinstance(user, User) else None,
             user_repr=str(user),
             method=request.method,
-            host=request.get_host(),
+            host=self.get_host(request),
             path=request.path,
             query=request.META.get('QUERY_STRING', ''),
             post=simplejson.dumps(dict(request.POST.items())),

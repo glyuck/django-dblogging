@@ -10,6 +10,23 @@ class RequestLogMiddlewareTestCase(TestCase):
     def url(self):
         return reverse('dblogging_test')
 
+    def test_get_host_HTTP_X_FORWARDED_HOST(self):
+        with self.settings(USE_X_FORWARDED_HOST=True):
+            self.client.get(self.url, HTTP_X_FORWARDED_HOST='www.google.com')
+            self.assertLog(host='www.google.com')
+
+    def test_get_host_HTTP_HOST(self):
+        self.client.get(self.url, HTTP_HOST='www.google.com')
+        self.assertLog(host='www.google.com')
+
+    def test_get_host_SERVER_NAME(self):
+        self.client.get(self.url, SERVER_NAME='www.google.com')
+        self.assertLog(host='www.google.com')
+
+    def test_get_host_SERVER_PORT(self):
+        self.client.get(self.url, SERVER_PORT=8000)
+        self.assertLog(host='%s:8000' % self.host)
+
     def test_redirect(self):
         self.client.get(reverse('dblogging_test_redirect'))
         self.assertLog(response_status_code=302, response_body='')
